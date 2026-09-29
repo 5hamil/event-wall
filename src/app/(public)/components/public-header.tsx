@@ -9,7 +9,6 @@ export function PublicHeader() {
       </Link>
       <nav aria-label="Main navigation" className="flex items-center gap-4 text-sm font-semibold text-muted sm:gap-7">
         <Link href="/clubs" className="transition hover:text-accent">Clubs</Link>
-        <Link href="/club/login" className="rounded-full bg-foreground px-4 py-2.5 text-xs font-semibold text-white transition hover:bg-accent sm:px-5 sm:text-sm">Club portal <span aria-hidden="true">↗</span></Link>
       </nav>
     </header>
   );
