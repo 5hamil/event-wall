@@ -22,19 +22,21 @@ function dateLabel(value: string, options: Intl.DateTimeFormatOptions) {
   return new Intl.DateTimeFormat("en", { ...options, timeZone: "UTC" }).format(new Date(value));
 }
 
-export default async function AdminEventsPage({ searchParams }: { searchParams?: { status?: string } }) {
+export default async function AdminEventsPage({ searchParams }: { searchParams?: { status?: string; club?: string } }) {
   const activeFilter = filters.some((filter) => filter.value === searchParams?.status)
     ? searchParams?.status ?? "all"
     : "all";
+  const selectedClubId = searchParams?.club ?? "";
   const supabase = createClient();
   let query = supabase
     .from("events")
     .select("id, club_id, category_id, title, event_date, created_at, status")
     .order("created_at", { ascending: false });
   if (activeFilter !== "all") query = query.eq("status", activeFilter);
+  if (selectedClubId) query = query.eq("club_id", selectedClubId);
 
   const { data: events, error } = await query;
-  const clubIds = Array.from(new Set((events ?? []).map((event) => event.club_id)));
+  const clubIds = Array.from(new Set([...(events ?? []).map((event) => event.club_id), ...(selectedClubId ? [selectedClubId] : [])]));
   const categoryIds = Array.from(new Set((events ?? []).flatMap((event) => event.category_id ? [event.category_id] : [])));
   const [clubsResult, categoriesResult] = await Promise.all([
     clubIds.length ? supabase.from("clubs").select("id, name").in("id", clubIds) : Promise.resolve({ data: [], error: null }),
@@ -42,6 +44,15 @@ export default async function AdminEventsPage({ searchParams }: { searchParams?:
   ]);
   const clubNames = new Map((clubsResult.data ?? []).map((club) => [club.id, club.name]));
   const categoryNames = new Map((categoriesResult.data ?? []).map((category) => [category.id, category.name]));
+  const selectedClubName = selectedClubId ? clubNames.get(selectedClubId) : undefined;
+  const filterHref = (value: string) => {
+    const params = new URLSearchParams();
+    if (value !== "all") params.set("status", value);
+    if (selectedClubId) params.set("club", selectedClubId);
+    const queryString = params.toString();
+    return queryString ? `/admin/events?${queryString}` : "/admin/events";
+  };
+  const clearClubHref = activeFilter === "all" ? "/admin/events" : `/admin/events?status=${activeFilter}`;
 
   return (
     <div>
@@ -54,11 +65,13 @@ export default async function AdminEventsPage({ searchParams }: { searchParams?:
       <nav aria-label="Filter events by status" className="mt-7 flex gap-2 overflow-x-auto pb-2">
         {filters.map((filter) => {
           const selected = activeFilter === filter.value;
-          return <Link key={filter.value} href={filter.value === "all" ? "/admin/events" : `/admin/events?status=${filter.value}`} aria-current={selected ? "page" : undefined} className={`inline-flex min-h-10 shrink-0 items-center rounded-full border px-4 text-xs font-semibold transition ${selected ? "border-accent bg-accent text-white shadow-[0_6px_16px_rgba(109,92,232,0.18)]" : "border-white/90 bg-white/70 text-muted shadow-sm backdrop-blur hover:border-accent/20 hover:text-foreground"}`}>
+          return <Link key={filter.value} href={filterHref(filter.value)} aria-current={selected ? "page" : undefined} className={`inline-flex min-h-10 shrink-0 items-center rounded-full border px-4 text-xs font-semibold transition ${selected ? "border-accent bg-accent text-white shadow-[0_6px_16px_rgba(109,92,232,0.18)]" : "border-white/90 bg-white/70 text-muted shadow-sm backdrop-blur hover:border-accent/20 hover:text-foreground"}`}>
             {filter.label}
           </Link>;
         })}
       </nav>
+
+      {selectedClubId && <div className="mt-2 flex flex-wrap items-center gap-2 rounded-2xl border border-accent/10 bg-violet-50/65 px-4 py-3 text-sm"><span className="text-muted">Showing events for</span><span className="font-semibold text-foreground">{selectedClubName ?? "Unknown club"}</span><Link href={clearClubHref} className="ml-auto rounded-full px-3 py-1.5 text-xs font-semibold text-accent transition hover:bg-white">Clear club filter ×</Link></div>}
 
       {error && <p role="alert" className="mt-6 rounded-2xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-700">Could not load events: {error.message}</p>}
 

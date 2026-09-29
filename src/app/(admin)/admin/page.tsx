@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import { AdminRefreshButton } from "./refresh-button";
 
 export default async function AdminOverviewPage() {
   const supabase = createClient();
@@ -31,14 +32,14 @@ export default async function AdminOverviewPage() {
     { label: "Approved", value: approvedResult.count ?? 0, href: "/admin/events?status=approved", hint: "Visible to students" },
     { label: "Rejected", value: rejectedResult.count ?? 0, href: "/admin/events?status=rejected", hint: "Returned to clubs for changes" },
     { label: "Archived", value: archivedResult.count ?? 0, href: "/admin/events?status=archived", hint: "Cancelled or withdrawn" },
-    { label: "Most active club", value: mostActiveResult?.data?.name ?? "—", href: "/admin/events", hint: mostActiveClubId ? `${activity[mostActiveClubId]} event${activity[mostActiveClubId] === 1 ? "" : "s"} submitted` : "No events submitted yet" },
+    { label: "Most active club", value: mostActiveResult?.data?.name ?? "—", href: mostActiveClubId ? `/admin/events?club=${mostActiveClubId}` : "/admin/clubs", hint: mostActiveClubId ? `${activity[mostActiveClubId]} event${activity[mostActiveClubId] === 1 ? "" : "s"} submitted · View club events` : "No events submitted yet" },
   ];
 
   return (
     <div>
       <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
         <div><p className="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[.2em] text-accent"><span className="h-1.5 w-1.5 rounded-full bg-accent"/> Campus at a glance</p><h1 className="mt-2 font-heading text-3xl font-extrabold tracking-[-.04em] sm:text-4xl">Overview</h1><p className="mt-2 text-sm text-muted sm:text-base">A quick look at your Event Wall workspace.</p></div>
-        <Link href="/admin/clubs" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-accent px-5 text-sm font-semibold text-white shadow-[0_9px_24px_rgba(109,92,232,0.22)] transition hover:-translate-y-0.5 hover:bg-accent-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2">Add a club <span aria-hidden="true" className="text-lg">＋</span></Link>
+        <div className="flex flex-col gap-2 sm:flex-row"><AdminRefreshButton/><Link href="/admin/clubs" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-accent px-5 text-sm font-semibold text-white shadow-[0_9px_24px_rgba(109,92,232,0.22)] transition hover:-translate-y-0.5 hover:bg-accent-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2">Add a club <span aria-hidden="true" className="text-lg">＋</span></Link></div>
       </div>
 
       {(clubsResult.error || eventsResult.error || draftResult.error || pendingResult.error || approvedResult.error || rejectedResult.error || archivedResult.error || activityResult.error || mostActiveResult?.error) && <p role="alert" className="mt-7 rounded-2xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-700">Could not load the latest counts. Check your Supabase connection and admin policies.</p>}
