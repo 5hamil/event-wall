@@ -10,6 +10,8 @@ import { useToast } from "@/components/toast-provider";
 
 type CategoryOption = { id: string; name: string };
 const posterExtensions: Record<string, string> = { "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp" };
+const fieldClass = "mt-2 w-full rounded-2xl border border-[#e9e7ef] bg-white/85 px-4 py-3 text-sm outline-none transition placeholder:text-muted/70 hover:border-accent/25 focus:border-accent focus:bg-white focus:ring-4 focus:ring-accent/10";
+const labelClass = "block text-sm font-semibold text-foreground";
 
 export function EventForm({ event, categories }: { event?: ClubEvent; categories: CategoryOption[] }) {
   const router = useRouter();
@@ -107,26 +109,28 @@ export function EventForm({ event, categories }: { event?: ClubEvent; categories
   }
 
   return (
-    <form onSubmit={save} className="space-y-5">
-      <label className="block text-sm font-medium">Event title<input required name="title" defaultValue={event?.title ?? ""} maxLength={180} className="mt-1.5 w-full rounded-xl border border-border px-4 py-3 outline-none focus:border-accent" /></label>
-      <label className="block text-sm font-medium">Description<textarea name="description" rows={5} defaultValue={event?.description ?? ""} className="mt-1.5 w-full resize-y rounded-xl border border-border px-4 py-3 outline-none focus:border-accent" /></label>
+    <form onSubmit={save} className="space-y-6">
+      <label className={labelClass}>Event title<input required name="title" defaultValue={event?.title ?? ""} maxLength={180} placeholder="Give your event a memorable name" className={fieldClass} /></label>
+      <label className={labelClass}>Description<textarea name="description" rows={5} defaultValue={event?.description ?? ""} placeholder="What should students know about this event?" className={fieldClass + " resize-y leading-6"} /></label>
       <div>
-        <label className="block text-sm font-medium">Event poster <span className="font-normal text-muted">(PNG, JPG or WebP; up to 10 MB)</span><input name="poster" type="file" accept="image/png,image/jpeg,image/webp" onChange={(change) => { const file = change.currentTarget.files?.[0]; if (!file) return; if (!posterExtensions[file.type] || file.size > 10 * 1024 * 1024) { setError(!posterExtensions[file.type] ? "Choose a PNG, JPG, or WebP event poster." : "The poster must be 10 MB or smaller."); change.currentTarget.value = ""; return; } setError(""); setPosterPreview(URL.createObjectURL(file)); }} className="mt-1.5 block w-full rounded-xl border border-border px-3 py-2.5 text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-violet-50 file:px-3 file:py-1.5 file:font-semibold file:text-accent" /></label>
-        {posterPreview && <div className="relative mt-3 h-44 w-full max-w-sm overflow-hidden rounded-xl bg-background"><Image src={posterPreview} alt="Event poster preview" fill sizes="(max-width: 640px) 100vw, 384px" unoptimized className="object-contain" /></div>}
+        <label className={labelClass}>Event poster <span className="font-normal text-muted">· PNG, JPG or WebP up to 10 MB</span><input name="poster" type="file" accept="image/png,image/jpeg,image/webp" onChange={(change) => { const file = change.currentTarget.files?.[0]; if (!file) return; if (!posterExtensions[file.type] || file.size > 10 * 1024 * 1024) { setError(!posterExtensions[file.type] ? "Choose a PNG, JPG, or WebP event poster." : "The poster must be 10 MB or smaller."); change.currentTarget.value = ""; return; } setError(""); setPosterPreview(URL.createObjectURL(file)); }} className="mt-2 block w-full rounded-2xl border border-dashed border-[#dcd8e7] bg-[#faf9fc] px-3 py-3 text-sm transition hover:border-accent/40 file:mr-3 file:rounded-full file:border-0 file:bg-violet-100 file:px-4 file:py-2 file:text-xs file:font-bold file:text-accent" /></label>
+        {posterPreview && <div className="relative mt-4 h-52 w-full max-w-sm overflow-hidden rounded-[20px] border border-white bg-gradient-to-br from-violet-50 to-amber-50 p-2 shadow-subtle"><Image src={posterPreview} alt="Event poster preview" fill sizes="(max-width: 640px) 100vw, 384px" unoptimized className="rounded-[16px] object-contain" /></div>}
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
-        <label className="block text-sm font-medium">Date<input required name="event_date" type="date" defaultValue={event?.event_date ?? ""} className="mt-1.5 w-full rounded-xl border border-border px-4 py-3 outline-none focus:border-accent" /></label>
-        <label className="block text-sm font-medium">Time<input name="event_time" type="time" defaultValue={event?.event_time?.slice(0, 5) ?? ""} className="mt-1.5 w-full rounded-xl border border-border px-4 py-3 outline-none focus:border-accent" /></label>
+        <label className={labelClass}>Date<input required name="event_date" type="date" defaultValue={event?.event_date ?? ""} className={fieldClass} /></label>
+        <label className={labelClass}>Time<input name="event_time" type="time" defaultValue={event?.event_time?.slice(0, 5) ?? ""} className={fieldClass} /></label>
       </div>
-      <label className="block text-sm font-medium">Venue<input name="venue" defaultValue={event?.venue ?? ""} className="mt-1.5 w-full rounded-xl border border-border px-4 py-3 outline-none focus:border-accent" /></label>
-      <label className="block text-sm font-medium">Category<select name="category_id" defaultValue={event?.category_id ?? ""} className="mt-1.5 w-full rounded-xl border border-border bg-white px-4 py-3 outline-none focus:border-accent"><option value="">Choose a category</option>{categories.map((category) => <option key={category.id} value={category.id}>{category.name}</option>)}</select></label>
-      <label className="block text-sm font-medium">Registration link<input name="registration_link" type="url" inputMode="url" placeholder="https://example.com/register" defaultValue={event?.registration_link ?? ""} className="mt-1.5 w-full rounded-xl border border-border px-4 py-3 outline-none focus:border-accent" /><span className="mt-1 block text-xs font-normal text-muted">Include the full http:// or https:// URL.</span></label>
-      <label className="block text-sm font-medium">Contact details<textarea name="contact_details" rows={2} defaultValue={event?.contact_details ?? ""} className="mt-1.5 w-full resize-y rounded-xl border border-border px-4 py-3 outline-none focus:border-accent" /></label>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <label className={labelClass}>Venue<input name="venue" defaultValue={event?.venue ?? ""} placeholder="Where is it happening?" className={fieldClass} /></label>
+        <label className={labelClass}>Category<select name="category_id" defaultValue={event?.category_id ?? ""} className={fieldClass}><option value="">Choose a category</option>{categories.map((category) => <option key={category.id} value={category.id}>{category.name}</option>)}</select></label>
+      </div>
+      <label className={labelClass}>Registration link<input name="registration_link" type="url" inputMode="url" placeholder="https://example.com/register" defaultValue={event?.registration_link ?? ""} className={fieldClass} /><span className="mt-2 block text-xs font-normal text-muted">Include the full http:// or https:// URL.</span></label>
+      <label className={labelClass}>Contact details<textarea name="contact_details" rows={2} defaultValue={event?.contact_details ?? ""} placeholder="Email, phone, or social handle" className={fieldClass + " resize-y leading-6"} /></label>
 
       {error && <p role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>}
-      <div className="flex flex-col-reverse justify-end gap-3 border-t border-border pt-5 sm:flex-row">
-        <button type="submit" name="status" value="draft" disabled={saving} className="rounded-xl border border-border px-5 py-3 text-sm font-semibold text-foreground hover:bg-background disabled:opacity-60">{saving ? "Saving…" : "Save as Draft"}</button>
-        <button type="submit" name="status" value="pending" disabled={saving} className="rounded-xl bg-accent px-5 py-3 text-sm font-semibold text-white hover:bg-accent-dark disabled:opacity-60">{saving ? "Saving…" : "Submit for Approval"}</button>
+      <div className="flex flex-col-reverse gap-3 border-t border-[#eeecf2] pt-5 sm:flex-row sm:justify-end">
+        <button type="submit" name="status" value="draft" disabled={saving} className="min-h-11 rounded-full border border-[#e9e7ef] bg-white px-5 text-sm font-semibold text-foreground transition hover:border-accent/25 hover:bg-[#faf9fc] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:opacity-60">{saving ? "Saving…" : "Save as Draft"}</button>
+        <button type="submit" name="status" value="pending" disabled={saving} className="min-h-11 rounded-full bg-accent px-5 text-sm font-semibold text-white shadow-[0_8px_22px_rgba(109,92,232,0.2)] transition hover:bg-accent-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 disabled:opacity-60">{saving ? "Saving…" : "Submit for Approval"}</button>
       </div>
     </form>
   );

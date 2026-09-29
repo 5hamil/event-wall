@@ -35,27 +35,29 @@ export default async function AdminOverviewPage() {
   ];
 
   return (
-    <div className="mx-auto max-w-6xl">
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div><p className="text-xs font-bold uppercase tracking-[.18em] text-accent">CAMPUS AT A GLANCE</p><h1 className="mt-2 font-heading text-3xl font-bold tracking-tight">Overview</h1><p className="mt-2 text-sm text-muted">A quick look at your Event Wall workspace.</p></div>
-        <Link href="/admin/clubs" className="rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-white shadow-subtle transition hover:bg-accent-dark">Add a club <span aria-hidden="true">＋</span></Link>
+    <div>
+      <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+        <div><p className="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[.2em] text-accent"><span className="h-1.5 w-1.5 rounded-full bg-accent"/> Campus at a glance</p><h1 className="mt-2 font-heading text-3xl font-extrabold tracking-[-.04em] sm:text-4xl">Overview</h1><p className="mt-2 text-sm text-muted sm:text-base">A quick look at your Event Wall workspace.</p></div>
+        <Link href="/admin/clubs" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-accent px-5 text-sm font-semibold text-white shadow-[0_9px_24px_rgba(109,92,232,0.22)] transition hover:-translate-y-0.5 hover:bg-accent-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2">Add a club <span aria-hidden="true" className="text-lg">＋</span></Link>
       </div>
 
-      {(clubsResult.error || eventsResult.error || draftResult.error || pendingResult.error || approvedResult.error || rejectedResult.error || archivedResult.error || activityResult.error || mostActiveResult?.error) && <p role="alert" className="mt-7 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">Could not load the latest counts. Check your Supabase connection and admin policies.</p>}
+      {(clubsResult.error || eventsResult.error || draftResult.error || pendingResult.error || approvedResult.error || rejectedResult.error || archivedResult.error || activityResult.error || mostActiveResult?.error) && <p role="alert" className="mt-7 rounded-2xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-700">Could not load the latest counts. Check your Supabase connection and admin policies.</p>}
 
-      <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-        {cards.map((card) => <Link key={card.label} href={card.href} className="rounded-card bg-white p-6 shadow-subtle transition hover:shadow-lift">
-          <p className="text-sm font-medium text-muted">{card.label}</p>
-          <p className="mt-4 font-heading text-4xl font-bold tracking-tight">{card.value ?? "—"}</p>
-          <p className="mt-3 text-xs text-muted">{card.hint}</p>
+      <div className="mt-8 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+        {cards.map((card, index) => <Link key={card.label} href={card.href} className="group relative overflow-hidden rounded-[22px] border border-white/90 bg-white/70 p-5 shadow-[0_10px_34px_rgba(28,24,52,0.045)] backdrop-blur-xl transition duration-200 hover:-translate-y-0.5 hover:border-accent/15 hover:bg-white/90 hover:shadow-[0_16px_40px_rgba(28,24,52,0.075)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent sm:p-6">
+          <span aria-hidden="true" className={`absolute -right-8 -top-10 h-28 w-28 rounded-full blur-2xl ${index === 3 ? "bg-amber-200/40" : index === 4 ? "bg-emerald-200/40" : "bg-violet-200/35"}`} />
+          <div className="relative flex items-start justify-between gap-3"><p className="text-xs font-semibold text-muted">{card.label}</p><span aria-hidden="true" className="grid h-8 w-8 place-items-center rounded-xl bg-violet-50 text-xs font-bold text-accent transition group-hover:bg-accent group-hover:text-white">↗</span></div>
+          <p className="relative mt-5 break-words font-heading text-3xl font-extrabold tracking-tight sm:text-4xl">{card.value ?? "—"}</p>
+          <p className="relative mt-2 text-xs leading-5 text-muted">{card.hint}</p>
         </Link>)}
       </div>
 
-      <section className="mt-8 rounded-card bg-white p-6 shadow-subtle sm:p-7">
-        <p className="text-xs font-bold uppercase tracking-[.16em] text-accent">GET STARTED</p>
-        <h2 className="mt-2 font-heading text-xl font-bold">Set up your campus wall</h2>
-        <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">Add your clubs and categories first. Club accounts can then submit events for review.</p>
-        <div className="mt-5 flex flex-wrap gap-3"><Link href="/admin/clubs" className="rounded-xl bg-background px-4 py-2.5 text-sm font-semibold hover:bg-violet-50">Manage clubs →</Link><Link href="/admin/categories" className="rounded-xl bg-background px-4 py-2.5 text-sm font-semibold hover:bg-violet-50">Manage categories →</Link></div>
+      <section className="relative mt-8 overflow-hidden rounded-[24px] border border-white/90 bg-white/65 p-6 shadow-[0_12px_36px_rgba(28,24,52,0.045)] backdrop-blur-xl sm:p-8">
+        <span aria-hidden="true" className="pointer-events-none absolute -right-10 -top-20 h-48 w-48 rounded-full bg-violet-200/40 blur-3xl" />
+        <p className="relative text-[10px] font-bold uppercase tracking-[.2em] text-accent">Get started</p>
+        <h2 className="relative mt-2 font-heading text-xl font-bold">Set up your campus wall</h2>
+        <p className="relative mt-2 max-w-2xl text-sm leading-6 text-muted">Add your clubs and categories first. Club accounts can then submit events for review.</p>
+        <div className="relative mt-5 flex flex-wrap gap-3"><Link href="/admin/clubs" className="inline-flex min-h-10 items-center rounded-full border border-[#e9e7ef] bg-white/85 px-4 text-sm font-semibold transition hover:border-accent/25 hover:text-accent">Manage clubs <span className="ml-2">→</span></Link><Link href="/admin/categories" className="inline-flex min-h-10 items-center rounded-full border border-[#e9e7ef] bg-white/85 px-4 text-sm font-semibold transition hover:border-accent/25 hover:text-accent">Manage categories <span className="ml-2">→</span></Link></div>
       </section>
     </div>
   );

@@ -27,18 +27,18 @@ export default async function AdminEventDetailPage({ params }: { params: { id: s
 
   return (
     <div className="mx-auto max-w-5xl">
-      <Link href="/admin/events" className="text-sm font-semibold text-muted hover:text-accent">← All events</Link>
-      <div className="mt-5 flex flex-wrap items-end justify-between gap-4">
+      <Link href="/admin/events" className="inline-flex items-center gap-2 rounded-full border border-white/90 bg-white/70 px-3.5 py-2 text-xs font-semibold text-muted shadow-sm backdrop-blur transition hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent">← All events</Link>
+      <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="text-xs font-bold uppercase tracking-[.18em] text-accent">EVENT REVIEW</p>
-          <h1 className="mt-2 font-heading text-3xl font-bold tracking-tight">{event.title}</h1>
+          <p className="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[.2em] text-accent"><span className="h-1.5 w-1.5 rounded-full bg-accent"/> Event review</p>
+          <h1 className="mt-2 break-words font-heading text-3xl font-extrabold tracking-[-.04em] sm:text-4xl">{event.title}</h1>
           <p className="mt-2 text-sm text-muted">{clubResult.data?.name ?? "Unknown club"} · Submitted {new Intl.DateTimeFormat("en", { dateStyle: "medium" }).format(new Date(event.created_at))}</p>
         </div>
-        <Link href={`/admin/events/${event.id}/edit`} className="rounded-xl border border-border bg-white px-4 py-2.5 text-sm font-semibold shadow-subtle hover:bg-neutral-50">Edit event</Link>
+        <Link href={`/admin/events/${event.id}/edit`} className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#e9e7ef] bg-white/80 px-5 text-sm font-semibold text-foreground transition hover:border-accent/25 hover:text-accent">Edit event</Link>
       </div>
 
-      <div className="mt-7 grid gap-6 lg:grid-cols-[minmax(0,1fr)_300px]">
-        <article className="overflow-hidden rounded-card bg-white shadow-subtle">
+      <div className="mt-7 grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px]">
+        <article className="overflow-hidden rounded-[24px] border border-white/90 bg-white/75 shadow-[0_14px_42px_rgba(28,24,52,0.055)] backdrop-blur-xl">
           {event.poster_url ? <div className="relative aspect-[16/8] bg-neutral-100"><Image src={event.poster_url} alt={`${event.title} poster`} fill sizes="(max-width: 1024px) 100vw, 700px" unoptimized className="object-cover" /></div> : <div className="grid aspect-[16/6] place-items-center bg-neutral-100 text-sm text-muted">No event poster</div>}
           <div className="p-6 sm:p-8">
             <div className="flex flex-wrap items-center gap-2 text-sm text-muted"><span>{formatDate(event.event_date, event.event_time)}</span><span aria-hidden="true">·</span><span>{event.venue || "Venue to be announced"}</span></div>
@@ -50,11 +50,11 @@ export default async function AdminEventDetailPage({ params }: { params: { id: s
           </div>
         </article>
 
-        <aside className="space-y-5">
+        <aside className="space-y-4">
           <AdminEventActions eventId={event.id} status={event.status} initialReason={event.rejection_reason} />
-          <section className="rounded-card bg-white p-5 shadow-subtle">
-            <p className="text-xs font-bold uppercase tracking-wide text-muted">Club</p>
-            <p className="mt-2 font-semibold">{clubResult.data?.name ?? "Unknown club"}</p>
+          <section className="rounded-[22px] border border-white/90 bg-white/70 p-5 shadow-[0_10px_34px_rgba(28,24,52,0.045)] backdrop-blur-xl">
+            <p className="text-[10px] font-bold uppercase tracking-[.15em] text-muted">Event details</p>
+            <p className="mt-2 font-heading font-bold">{clubResult.data?.name ?? "Unknown club"}</p>
             <p className="mt-4 text-xs font-bold uppercase tracking-wide text-muted">Category</p>
             <p className="mt-2 text-sm">{categoryResult.data?.name ?? "Uncategorized"}</p>
             <p className="mt-4 text-xs font-bold uppercase tracking-wide text-muted">Status</p>

@@ -43,15 +43,15 @@ export function AdminEventActions({ eventId, status, initialReason }: { eventId:
   }
 
   return (
-    <section className="rounded-card bg-white p-5 shadow-subtle">
-      <p className="text-xs font-bold uppercase tracking-wide text-muted">Moderation</p>
-      {status === "archived" ? <div className="mt-4"><p className="text-sm text-muted">This event is archived and hidden from public listings.</p><button disabled={busy} onClick={() => void update({ status: "approved", rejection_reason: null })} className="mt-4 w-full rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-60">{busy ? "Saving…" : "Restore as approved"}</button></div> : <>
-        <button disabled={busy} onClick={() => void update({ status: "approved", rejection_reason: null })} className="mt-4 w-full rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700 disabled:opacity-60">{busy ? "Saving…" : "Approve event"}</button>
-        <label className="mt-5 block text-sm font-medium">Reason for rejection<textarea value={reason} onChange={(event) => setReason(event.target.value)} rows={4} placeholder="Explain what the club should update…" className="mt-1.5 w-full resize-y rounded-xl border border-border px-3.5 py-3 text-sm outline-none focus:border-accent" /></label>
-        <button disabled={busy} onClick={reject} className="mt-3 w-full rounded-xl border border-red-200 px-4 py-2.5 text-sm font-semibold text-red-700 hover:bg-red-50 disabled:opacity-60">{busy ? "Saving…" : "Reject with reason"}</button>
-        {status === "approved" && <button disabled={busy} onClick={() => void update({ status: "archived", rejection_reason: null })} className="mt-3 w-full rounded-xl border border-border px-4 py-2.5 text-sm font-semibold text-muted hover:bg-neutral-50 disabled:opacity-60">Archive cancelled event</button>}
+    <section className="rounded-[22px] border border-white/90 bg-white/75 p-5 shadow-[0_10px_34px_rgba(28,24,52,0.045)] backdrop-blur-xl">
+      <p className="text-[10px] font-bold uppercase tracking-[.16em] text-muted">Moderation</p>
+      {status === "archived" ? <div className="mt-4"><p className="text-sm leading-6 text-muted">This event is archived and hidden from public listings.</p><button disabled={busy} onClick={() => void update({ status: "approved", rejection_reason: null })} className="mt-4 min-h-11 w-full rounded-full bg-accent px-4 text-sm font-semibold text-white transition hover:bg-accent-dark disabled:opacity-60">{busy ? "Saving…" : "Restore as approved"}</button></div> : <>
+        <button disabled={busy} onClick={() => void update({ status: "approved", rejection_reason: null })} className="mt-4 min-h-11 w-full rounded-full bg-emerald-600 px-4 text-sm font-semibold text-white transition hover:bg-emerald-700 disabled:opacity-60">{busy ? "Saving…" : "Approve event"}</button>
+        <label className="mt-5 block text-sm font-semibold">Reason for rejection<textarea value={reason} onChange={(event) => setReason(event.target.value)} rows={4} placeholder="Explain what the club should update…" className="mt-2 w-full resize-y rounded-2xl border border-[#e9e7ef] bg-white/85 px-3.5 py-3 text-sm font-normal leading-6 outline-none transition focus:border-accent focus:ring-4 focus:ring-accent/10" /></label>
+        <button disabled={busy} onClick={reject} className="mt-3 min-h-11 w-full rounded-full border border-rose-200 bg-rose-50/70 px-4 text-sm font-semibold text-rose-700 transition hover:bg-rose-100 disabled:opacity-60">{busy ? "Saving…" : "Reject with reason"}</button>
+        {status === "approved" && <button disabled={busy} onClick={() => void update({ status: "archived", rejection_reason: null })} className="mt-3 min-h-11 w-full rounded-full border border-[#e9e7ef] bg-white/70 px-4 text-sm font-semibold text-muted transition hover:bg-[#f7f6fa] disabled:opacity-60">Archive cancelled event</button>}
       </>}
-      {error && <p role="alert" className="mt-3 rounded-lg bg-red-50 px-3 py-2.5 text-sm text-red-700">{error}</p>}
+      {error && <p role="alert" className="mt-3 rounded-xl border border-red-100 bg-red-50 px-3 py-2.5 text-sm text-red-700">{error}</p>}
     </section>
   );
 }

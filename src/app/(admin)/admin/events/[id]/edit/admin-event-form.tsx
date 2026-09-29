@@ -82,25 +82,25 @@ export function AdminEventForm({ event, clubs, categories }: { event: EventValue
     setSaving(false);
   }
 
-  const inputClass = "mt-1.5 w-full rounded-xl border border-border px-3.5 py-3 text-sm outline-none focus:border-accent";
+  const inputClass = "mt-2 w-full rounded-2xl border border-[#e9e7ef] bg-white/85 px-4 py-3 text-sm outline-none transition placeholder:text-muted/70 hover:border-accent/25 focus:border-accent focus:ring-4 focus:ring-accent/10";
   return (
-    <form onSubmit={save} className="space-y-5">
-      <label className="block text-sm font-medium">Club<select name="club_id" required defaultValue={event.club_id} className={`${inputClass} bg-white`}>{clubs.map((club) => <option key={club.id} value={club.id}>{club.name}</option>)}</select></label>
-      <label className="block text-sm font-medium">Title<input required name="title" maxLength={180} defaultValue={event.title} className={inputClass} /></label>
-      <label className="block text-sm font-medium">Description<textarea name="description" rows={5} defaultValue={event.description ?? ""} className={`${inputClass} resize-y`} /></label>
+    <form onSubmit={save} className="space-y-6">
+      <label className="block text-sm font-semibold">Club<select name="club_id" required defaultValue={event.club_id} className={inputClass}>{clubs.map((club) => <option key={club.id} value={club.id}>{club.name}</option>)}</select></label>
+      <label className="block text-sm font-semibold">Title<input required name="title" maxLength={180} defaultValue={event.title} className={inputClass} /></label>
+      <label className="block text-sm font-semibold">Description<textarea name="description" rows={5} defaultValue={event.description ?? ""} className={`${inputClass} resize-y leading-6`} /></label>
       <label className="block text-sm font-medium">Poster URL<input name="poster_url" type="url" defaultValue={event.poster_url ?? ""} placeholder="https://…" className={inputClass} /></label>
       <div className="grid gap-4 sm:grid-cols-2">
-        <label className="block text-sm font-medium">Event date<input required name="event_date" type="date" defaultValue={event.event_date} className={inputClass} /></label>
-        <label className="block text-sm font-medium">Event time<input name="event_time" type="time" defaultValue={event.event_time?.slice(0, 5) ?? ""} className={inputClass} /></label>
+        <label className="block text-sm font-semibold">Event date<input required name="event_date" type="date" defaultValue={event.event_date} className={inputClass} /></label>
+        <label className="block text-sm font-semibold">Event time<input name="event_time" type="time" defaultValue={event.event_time?.slice(0, 5) ?? ""} className={inputClass} /></label>
       </div>
-      <label className="block text-sm font-medium">Venue<input name="venue" defaultValue={event.venue ?? ""} className={inputClass} /></label>
-      <label className="block text-sm font-medium">Category<select name="category_id" defaultValue={event.category_id ?? ""} className={`${inputClass} bg-white`}><option value="">Uncategorized</option>{categories.map((category) => <option key={category.id} value={category.id}>{category.name}</option>)}</select></label>
-      <label className="block text-sm font-medium">Registration URL<input name="registration_link" type="url" defaultValue={event.registration_link ?? ""} placeholder="https://…" className={inputClass} /></label>
-      <label className="block text-sm font-medium">Contact details<textarea name="contact_details" rows={3} defaultValue={event.contact_details ?? ""} className={`${inputClass} resize-y`} /></label>
-      <label className="block text-sm font-medium">Status<select name="status" defaultValue={event.status} className={`${inputClass} bg-white`}><option value="draft">Draft</option><option value="pending">Pending</option><option value="approved">Approved</option><option value="rejected">Rejected</option><option value="archived">Archived</option></select></label>
-      <label className="block text-sm font-medium">Rejection reason<textarea name="rejection_reason" rows={3} defaultValue={event.rejection_reason ?? ""} className={`${inputClass} resize-y`} /><span className="mt-1 block text-xs font-normal text-muted">Required when status is Rejected.</span></label>
-      {error && <p role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>}
-      <div className="flex justify-end border-t border-border pt-5"><button disabled={saving} className="rounded-xl bg-accent px-5 py-3 text-sm font-semibold text-white hover:bg-accent-dark disabled:opacity-60">{saving ? "Saving…" : "Save event changes"}</button></div>
+      <div className="grid gap-4 sm:grid-cols-2"><label className="block text-sm font-semibold">Venue<input name="venue" defaultValue={event.venue ?? ""} className={inputClass} /></label>
+      <label className="block text-sm font-semibold">Category<select name="category_id" defaultValue={event.category_id ?? ""} className={inputClass}><option value="">Uncategorized</option>{categories.map((category) => <option key={category.id} value={category.id}>{category.name}</option>)}</select></label></div>
+      <label className="block text-sm font-semibold">Registration URL<input name="registration_link" type="url" defaultValue={event.registration_link ?? ""} placeholder="https://…" className={inputClass} /></label>
+      <label className="block text-sm font-semibold">Contact details<textarea name="contact_details" rows={3} defaultValue={event.contact_details ?? ""} className={`${inputClass} resize-y leading-6`} /></label>
+      <label className="block text-sm font-semibold">Status<select name="status" defaultValue={event.status} className={inputClass}><option value="draft">Draft</option><option value="pending">Pending</option><option value="approved">Approved</option><option value="rejected">Rejected</option><option value="archived">Archived</option></select></label>
+      <label className="block text-sm font-semibold">Rejection reason<textarea name="rejection_reason" rows={3} defaultValue={event.rejection_reason ?? ""} className={`${inputClass} resize-y leading-6`} /><span className="mt-2 block text-xs font-normal text-muted">Required when status is Rejected.</span></label>
+      {error && <p role="alert" className="rounded-2xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>}
+      <div className="flex justify-end border-t border-[#eeecf2] pt-5"><button disabled={saving} className="min-h-11 w-full rounded-full bg-accent px-5 text-sm font-semibold text-white shadow-[0_8px_22px_rgba(109,92,232,0.2)] transition hover:bg-accent-dark disabled:opacity-60 sm:w-auto">{saving ? "Saving…" : "Save event changes"}</button></div>
     </form>
   );
 }
