@@ -39,7 +39,7 @@ export default async function AdminEventDetailPage({ params }: { params: { id: s
 
       <div className="mt-7 grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px]">
         <article className="overflow-hidden rounded-[24px] border border-white/90 bg-white/75 shadow-[0_14px_42px_rgba(28,24,52,0.055)] backdrop-blur-xl">
-          {event.poster_url ? <div className="relative aspect-[16/8] bg-neutral-100"><Image src={event.poster_url} alt={`${event.title} poster`} fill sizes="(max-width: 1024px) 100vw, 700px" unoptimized className="object-cover" /></div> : <div className="grid aspect-[16/6] place-items-center bg-neutral-100 text-sm text-muted">No event poster</div>}
+          {event.poster_url ? <div className="relative mx-auto h-[65vh] min-h-[320px] max-h-[760px] w-full bg-neutral-100"><Image src={event.poster_url} alt={`${event.title} poster`} fill sizes="(max-width: 1024px) 100vw, 700px" unoptimized className="object-contain" /></div> : <div className="grid h-64 place-items-center bg-neutral-100 text-sm text-muted">No event poster</div>}
           <div className="p-6 sm:p-8">
             <div className="flex flex-wrap items-center gap-2 text-sm text-muted"><span>{formatDate(event.event_date, event.event_time)}</span><span aria-hidden="true">·</span><span>{event.venue || "Venue to be announced"}</span></div>
             <p className="mt-4 text-xs font-semibold uppercase tracking-[.16em] text-accent">{categoryResult.data?.name ?? "Campus event"}</p>

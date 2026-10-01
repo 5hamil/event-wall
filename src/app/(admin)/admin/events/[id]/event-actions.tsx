@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/toast-provider";
 
 type Status = "draft" | "pending" | "approved" | "rejected" | "archived";
@@ -18,9 +17,13 @@ export function AdminEventActions({ eventId, status, initialReason }: { eventId:
     setBusy(true);
     setError("");
     try {
-      const supabase = createClient();
-      const { data, error: updateError } = await supabase.from("events").update(values).eq("id", eventId).select("id").maybeSingle();
-      if (updateError || !data) throw new Error(updateError?.message ?? "The event could not be updated.");
+      const response = await fetch(`/api/admin/events/${eventId}/moderate`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(values),
+      });
+      const result = await response.json().catch(() => null) as { error?: string } | null;
+      if (!response.ok) throw new Error(result?.error ?? "The event could not be updated.");
       setReason(values.rejection_reason ?? "");
       toast(values.status === "approved" ? "Event approved." : values.status === "rejected" ? "Event rejected and reason saved." : "Event archived.");
       router.refresh();

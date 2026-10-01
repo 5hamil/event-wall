@@ -48,8 +48,8 @@ export default async function PublicEventDetailPage({ params }: EventPageProps) 
         <Link href="/" className="text-sm font-semibold text-muted transition hover:text-accent">← Back to events</Link>
         <div className="mt-5 grid items-start gap-7 lg:grid-cols-[minmax(0,1.25fr)_minmax(300px,.75fr)] lg:gap-10">
           <div>
-            <div className="relative aspect-[4/3] overflow-hidden rounded-[22px] bg-gradient-to-br from-violet-100 via-fuchsia-50 to-amber-50 shadow-subtle sm:aspect-[16/10]">
-              {event.poster_url ? <Image src={event.poster_url} alt={`${event.title} event poster`} fill priority sizes="(max-width: 1023px) 100vw, 65vw" unoptimized className="object-cover" /> : <div className="absolute inset-0 grid place-items-center"><span aria-hidden="true" className="font-heading text-8xl font-extrabold tracking-tight text-accent/30">e.</span></div>}
+            <div className="relative mx-auto h-[58vh] min-h-[300px] max-h-[760px] overflow-hidden rounded-[22px] bg-gradient-to-br from-violet-100 via-fuchsia-50 to-amber-50 shadow-subtle">
+              {event.poster_url ? <Image src={event.poster_url} alt={`${event.title} event poster`} fill priority sizes="(max-width: 1023px) 100vw, 65vw" unoptimized className="object-contain" /> : <div className="absolute inset-0 grid place-items-center"><span aria-hidden="true" className="font-heading text-8xl font-extrabold tracking-tight text-accent/30">e.</span></div>}
             </div>
             <div className="mt-7">
               {categoryResult.data?.name && <p className="text-xs font-bold uppercase tracking-[.17em] text-accent">{categoryResult.data.name}</p>}
