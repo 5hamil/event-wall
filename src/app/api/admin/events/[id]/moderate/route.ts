@@ -26,8 +26,10 @@ export async function POST(request: Request, { params }: { params: { id: string 
     return NextResponse.json({ error: "Enter a reason so the club knows what to change." }, { status: 400 });
   }
 
-  const service = createServiceClient();
-  const { data: admin, error: adminError } = await service
+  // Verify membership with the caller's cookie-bound session. This is the
+  // same check used by the protected admin layout and avoids relying on the
+  // service key to identify the caller's admin row.
+  const { data: admin, error: adminError } = await supabase
     .from("admins")
     .select("id")
     .eq("user_id", user.id)
@@ -35,6 +37,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
   if (adminError) return NextResponse.json({ error: "Could not verify administrator access." }, { status: 500 });
   if (!admin) return NextResponse.json({ error: "This account is not authorized to moderate events." }, { status: 403 });
 
+  const service = createServiceClient();
   const { data: event, error: updateError } = await service
     .from("events")
     .update({
