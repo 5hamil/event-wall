@@ -26,16 +26,12 @@ export async function POST(request: Request, { params }: { params: { id: string 
     return NextResponse.json({ error: "Enter a reason so the club knows what to change." }, { status: 400 });
   }
 
-  // Verify membership with the caller's cookie-bound session. This is the
-  // same check used by the protected admin layout and avoids relying on the
-  // service key to identify the caller's admin row.
-  const { data: admin, error: adminError } = await supabase
-    .from("admins")
-    .select("id")
-    .eq("user_id", user.id)
-    .maybeSingle();
-  if (adminError) return NextResponse.json({ error: "Could not verify administrator access." }, { status: 500 });
-  if (!admin) return NextResponse.json({ error: "This account is not authorized to moderate events." }, { status: 403 });
+  // Use the database's security-definer check with this cookie-bound session.
+  // It checks auth.uid() against admins without relying on an admins SELECT
+  // policy, so authorization behaves consistently for every event/club.
+  const { data: isAdmin, error: adminCheckError } = await supabase.rpc("is_event_wall_admin");
+  if (adminCheckError) return NextResponse.json({ error: "Could not verify administrator access. Refresh and try again." }, { status: 500 });
+  if (isAdmin !== true) return NextResponse.json({ error: "This account is not authorized to moderate events." }, { status: 403 });
 
   const service = createServiceClient();
   const { data: event, error: updateError } = await service
