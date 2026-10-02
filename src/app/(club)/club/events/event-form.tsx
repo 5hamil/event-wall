@@ -27,7 +27,7 @@ export function EventForm({ event, categories }: { event?: ClubEvent; categories
     setSaving(true);
     const form = new FormData(formEvent.currentTarget);
     const submitter = (formEvent.nativeEvent as SubmitEvent).submitter as HTMLButtonElement | null;
-    const status = submitter?.value === "pending" ? "pending" : "draft";
+    const status = submitter?.value === "published" ? "published" : "draft";
     const title = String(form.get("title") ?? "").trim();
     const description = String(form.get("description") ?? "").trim();
     const eventDate = String(form.get("event_date") ?? "");
@@ -83,7 +83,6 @@ export function EventForm({ event, categories }: { event?: ClubEvent; categories
         registration_link: registrationLink,
         contact_details: contactDetails || null,
         status,
-        rejection_reason: null,
       };
       const result = event
         ? await supabase.from("events").update(values).eq("id", event.id).eq("club_id", clubId).select("id").maybeSingle()
@@ -97,7 +96,7 @@ export function EventForm({ event, categories }: { event?: ClubEvent; categories
         throw new Error(result.error?.message ?? "Could not save this event. Check that it still belongs to your club.");
       }
 
-      toast(status === "pending" ? "Event submitted for approval." : "Event saved as a draft.");
+      toast(status === "published" ? "Event published and live on the event wall." : "Event saved as a draft.");
       router.push("/club/events");
       router.refresh();
     } catch (caught) {
@@ -130,7 +129,7 @@ export function EventForm({ event, categories }: { event?: ClubEvent; categories
       {error && <p role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>}
       <div className="flex flex-col-reverse gap-3 border-t border-[#eeecf2] pt-5 sm:flex-row sm:justify-end">
         <button type="submit" name="status" value="draft" disabled={saving} className="min-h-11 rounded-full border border-[#e9e7ef] bg-white px-5 text-sm font-semibold text-foreground transition hover:border-accent/25 hover:bg-[#faf9fc] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:opacity-60">{saving ? "Saving…" : "Save as Draft"}</button>
-        <button type="submit" name="status" value="pending" disabled={saving} className="min-h-11 rounded-full bg-accent px-5 text-sm font-semibold text-white shadow-[0_8px_22px_rgba(109,92,232,0.2)] transition hover:bg-accent-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 disabled:opacity-60">{saving ? "Saving…" : "Submit for Approval"}</button>
+        <button type="submit" name="status" value="published" disabled={saving} className="min-h-11 rounded-full bg-accent px-5 text-sm font-semibold text-white shadow-[0_8px_22px_rgba(109,92,232,0.2)] transition hover:bg-accent-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 disabled:opacity-60">{saving ? "Saving…" : "Publish"}</button>
       </div>
     </form>
   );

@@ -15,7 +15,7 @@ export default async function AdminEventDetailPage({ params }: { params: { id: s
   const supabase = createClient();
   const { data: event, error } = await supabase
     .from("events")
-    .select("id, club_id, category_id, title, description, poster_url, event_date, event_time, venue, registration_link, contact_details, status, rejection_reason, created_at, updated_at")
+    .select("id, club_id, category_id, title, description, poster_url, event_date, event_time, venue, registration_link, contact_details, status, created_at, updated_at")
     .eq("id", params.id)
     .maybeSingle();
   if (error || !event) notFound();
@@ -30,7 +30,7 @@ export default async function AdminEventDetailPage({ params }: { params: { id: s
       <Link href="/admin/events" className="inline-flex items-center gap-2 rounded-full border border-white/90 bg-white/70 px-3.5 py-2 text-xs font-semibold text-muted shadow-sm backdrop-blur transition hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent">← All events</Link>
       <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[.2em] text-accent"><span className="h-1.5 w-1.5 rounded-full bg-accent"/> Event review</p>
+          <p className="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[.2em] text-accent"><span className="h-1.5 w-1.5 rounded-full bg-accent"/> Event management</p>
           <h1 className="mt-2 break-words font-heading text-3xl font-extrabold tracking-[-.04em] sm:text-4xl">{event.title}</h1>
           <p className="mt-2 text-sm text-muted">{clubResult.data?.name ?? "Unknown club"} · Submitted {new Intl.DateTimeFormat("en", { dateStyle: "medium" }).format(new Date(event.created_at))}</p>
         </div>
@@ -51,7 +51,7 @@ export default async function AdminEventDetailPage({ params }: { params: { id: s
         </article>
 
         <aside className="space-y-4">
-          <AdminEventActions eventId={event.id} status={event.status} initialReason={event.rejection_reason} />
+          <AdminEventActions eventId={event.id} status={event.status} />
           <section className="rounded-[22px] border border-white/90 bg-white/70 p-5 shadow-[0_10px_34px_rgba(28,24,52,0.045)] backdrop-blur-xl">
             <p className="text-[10px] font-bold uppercase tracking-[.15em] text-muted">Event details</p>
             <p className="mt-2 font-heading font-bold">{clubResult.data?.name ?? "Unknown club"}</p>
@@ -59,7 +59,6 @@ export default async function AdminEventDetailPage({ params }: { params: { id: s
             <p className="mt-2 text-sm">{categoryResult.data?.name ?? "Uncategorized"}</p>
             <p className="mt-4 text-xs font-bold uppercase tracking-wide text-muted">Status</p>
             <p className="mt-2 text-sm font-semibold capitalize">{event.status}</p>
-            {event.rejection_reason && <><p className="mt-4 text-xs font-bold uppercase tracking-wide text-muted">Rejection reason</p><p className="mt-2 rounded-lg bg-red-50 p-3 text-sm leading-6 text-red-800">{event.rejection_reason}</p></>}
           </section>
         </aside>
       </div>

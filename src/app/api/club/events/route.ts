@@ -23,11 +23,11 @@ export async function POST(request: Request) {
   try { body = await request.json(); } catch { return NextResponse.json({ error: "Invalid event submission." }, { status: 400 }); }
   const title = typeof body.title === "string" ? body.title.trim() : "";
   const eventDate = typeof body.event_date === "string" ? body.event_date : "";
-  const status = body.status === "pending" ? "pending" : body.status === "draft" ? "draft" : null;
+  const status = body.status === "published" ? "published" : body.status === "draft" ? "draft" : null;
   if (!title || title.length > 180) return NextResponse.json({ error: "Enter an event title up to 180 characters." }, { status: 400 });
   if (!/^\d{4}-\d{2}-\d{2}$/.test(eventDate) || Number.isNaN(Date.parse(`${eventDate}T00:00:00Z`)) || new Date(`${eventDate}T00:00:00Z`).toISOString().slice(0, 10) !== eventDate) return NextResponse.json({ error: "Choose a valid event date." }, { status: 400 });
   if (eventDate < campusToday()) return NextResponse.json({ error: "New events must be scheduled for today or a future date." }, { status: 400 });
-  if (!status) return NextResponse.json({ error: "Choose draft or pending status." }, { status: 400 });
+  if (!status) return NextResponse.json({ error: "Choose draft or published status." }, { status: 400 });
   const registrationLink = typeof body.registration_link === "string" && body.registration_link ? body.registration_link : null;
   if (registrationLink) {
     try { const parsed = new URL(registrationLink); if (!["http:", "https:"].includes(parsed.protocol)) throw new Error(); }
@@ -46,7 +46,6 @@ export async function POST(request: Request) {
     registration_link: registrationLink,
     contact_details: typeof body.contact_details === "string" ? body.contact_details.trim() || null : null,
     status,
-    rejection_reason: null,
   }).select("id").maybeSingle();
   if (error || !data) return NextResponse.json({ error: error?.message ?? "Could not create the event." }, { status: 400 });
   return NextResponse.json({ id: data.id }, { status: 201 });

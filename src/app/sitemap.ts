@@ -9,7 +9,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const supabase = createPublicClient();
   const [clubsResult, eventsResult] = await Promise.all([
     supabase.from("clubs").select("id, slug").eq("is_active", true),
-    supabase.from("events").select("id, club_id, updated_at").eq("status", "approved"),
+    supabase.from("events").select("id, club_id, updated_at").eq("status", "published"),
   ]);
   const clubs = clubsResult.data ?? [];
   const activeClubIds = new Set(clubs.map((club) => club.id));

@@ -9,7 +9,7 @@ type EventValue = {
   id: string; club_id: string; category_id: string | null; title: string; description: string | null;
   poster_url: string | null; event_date: string; event_time: string | null; venue: string | null;
   registration_link: string | null; contact_details: string | null;
-  status: "draft" | "pending" | "approved" | "rejected" | "archived"; rejection_reason: string | null;
+  status: "draft" | "published" | "archived";
 };
 type Option = { id: string; name: string };
 
@@ -40,9 +40,8 @@ export function AdminEventForm({ event, clubs, categories }: { event: EventValue
         return;
       }
     }
-    const rejectionReason = read("rejection_reason");
-    if (status === "rejected" && !rejectionReason) {
-      setError("A rejection reason is required when setting status to rejected.");
+    if (!["draft", "published", "archived"].includes(status)) {
+      setError("Choose a valid event status.");
       setSaving(false);
       return;
     }
@@ -67,7 +66,6 @@ export function AdminEventForm({ event, clubs, categories }: { event: EventValue
         registration_link: registrationLink,
         contact_details: read("contact_details") || null,
         status,
-        rejection_reason: status === "rejected" ? rejectionReason : null,
       }).eq("id", event.id).select("id").maybeSingle();
       if (updateError || !data) throw new Error(updateError?.message ?? "The event could not be updated.");
       toast("Event changes saved.");
@@ -97,8 +95,7 @@ export function AdminEventForm({ event, clubs, categories }: { event: EventValue
       <label className="block text-sm font-semibold">Category<select name="category_id" defaultValue={event.category_id ?? ""} className={inputClass}><option value="">Uncategorized</option>{categories.map((category) => <option key={category.id} value={category.id}>{category.name}</option>)}</select></label></div>
       <label className="block text-sm font-semibold">Registration URL<input name="registration_link" type="url" defaultValue={event.registration_link ?? ""} placeholder="https://…" className={inputClass} /></label>
       <label className="block text-sm font-semibold">Contact details<textarea name="contact_details" rows={3} defaultValue={event.contact_details ?? ""} className={`${inputClass} resize-y leading-6`} /></label>
-      <label className="block text-sm font-semibold">Status<select name="status" defaultValue={event.status} className={inputClass}><option value="draft">Draft</option><option value="pending">Pending</option><option value="approved">Approved</option><option value="rejected">Rejected</option><option value="archived">Archived</option></select></label>
-      <label className="block text-sm font-semibold">Rejection reason<textarea name="rejection_reason" rows={3} defaultValue={event.rejection_reason ?? ""} className={`${inputClass} resize-y leading-6`} /><span className="mt-2 block text-xs font-normal text-muted">Required when status is Rejected.</span></label>
+      <label className="block text-sm font-semibold">Status<select name="status" defaultValue={event.status} className={inputClass}><option value="draft">Draft</option><option value="published">Published</option><option value="archived">Archived</option></select></label>
       {error && <p role="alert" className="rounded-2xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>}
       <div className="flex justify-end border-t border-[#eeecf2] pt-5"><button disabled={saving} className="min-h-11 w-full rounded-full bg-accent px-5 text-sm font-semibold text-white shadow-[0_8px_22px_rgba(109,92,232,0.2)] transition hover:bg-accent-dark disabled:opacity-60 sm:w-auto">{saving ? "Saving…" : "Save event changes"}</button></div>
     </form>

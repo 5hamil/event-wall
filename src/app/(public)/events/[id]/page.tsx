@@ -12,7 +12,7 @@ type EventPageProps = { params: { id: string } };
 
 export async function generateMetadata({ params }: EventPageProps): Promise<Metadata> {
   const supabase = createPublicClient();
-  const { data: event } = await supabase.from("events").select("title, description, poster_url").eq("id", params.id).eq("status", "approved").maybeSingle();
+  const { data: event } = await supabase.from("events").select("title, description, poster_url").eq("id", params.id).eq("status", "published").maybeSingle();
   if (!event) return { title: "Event not found | Event Wall" };
   const description = event.description?.replace(/\s+/g, " ").trim().slice(0, 200) || `Discover ${event.title} on Event Wall.`;
   const images = event.poster_url ? [{ url: event.poster_url, alt: `${event.title} event poster` }] : undefined;
@@ -31,7 +31,7 @@ export default async function PublicEventDetailPage({ params }: EventPageProps) 
     .from("events")
     .select("id, club_id, category_id, title, description, poster_url, event_date, event_time, venue, registration_link, contact_details")
     .eq("id", params.id)
-    .eq("status", "approved")
+    .eq("status", "published")
     .maybeSingle();
   if (!event) notFound();
 

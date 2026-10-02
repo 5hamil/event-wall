@@ -3,18 +3,14 @@ import { createClient } from "@/lib/supabase/server";
 
 const filters = [
   { label: "All", value: "all" },
-  { label: "Pending", value: "pending" },
-  { label: "Approved", value: "approved" },
-  { label: "Rejected", value: "rejected" },
   { label: "Draft", value: "draft" },
+  { label: "Published", value: "published" },
   { label: "Archived", value: "archived" },
 ] as const;
 
 const statusStyles: Record<string, string> = {
   draft: "border border-slate-200 bg-slate-50 text-slate-600",
-  pending: "border border-amber-200 bg-amber-50 text-amber-800",
-  approved: "border border-emerald-200 bg-emerald-50 text-emerald-700",
-  rejected: "border border-rose-200 bg-rose-50 text-rose-700",
+  published: "border border-emerald-200 bg-emerald-50 text-emerald-700",
   archived: "border border-slate-200 bg-slate-50 text-slate-500",
 };
 
@@ -57,9 +53,9 @@ export default async function AdminEventsPage({ searchParams }: { searchParams?:
   return (
     <div>
       <div>
-        <p className="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[.2em] text-accent"><span className="h-1.5 w-1.5 rounded-full bg-accent"/> Moderation</p>
+        <p className="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[.2em] text-accent"><span className="h-1.5 w-1.5 rounded-full bg-accent"/> Event management</p>
         <h1 className="mt-2 font-heading text-3xl font-extrabold tracking-[-.04em] sm:text-4xl">Events</h1>
-        <p className="mt-2 text-sm text-muted sm:text-base">Review submissions, update event details, and archive cancelled listings.</p>
+        <p className="mt-2 text-sm text-muted sm:text-base">Manage event details, publication, and archived listings.</p>
       </div>
 
       <nav aria-label="Filter events by status" className="mt-7 flex gap-2 overflow-x-auto pb-2">
@@ -90,7 +86,7 @@ export default async function AdminEventsPage({ searchParams }: { searchParams?:
                 <td className="px-5 py-4 text-muted">{dateLabel(event.created_at, { month: "short", day: "numeric", year: "numeric" })}</td>
                 <td className="px-5 py-4"><span className={`rounded-full px-2.5 py-1 text-xs font-semibold capitalize ${statusStyles[event.status] ?? statusStyles.draft}`}>{event.status}</span></td>
               </tr>)}
-              {!error && (events ?? []).length === 0 && <tr><td colSpan={6} className="px-5 py-12 text-center"><p className="font-heading text-base font-bold text-foreground">{activeFilter === "pending" ? "No pending approvals" : "No events found"}</p><p className="mt-1 text-sm text-muted">{activeFilter === "pending" ? "You’re all caught up." : "Events matching this status will appear here."}</p></td></tr>}
+              {!error && (events ?? []).length === 0 && <tr><td colSpan={6} className="px-5 py-12 text-center"><p className="font-heading text-base font-bold text-foreground">No events found</p><p className="mt-1 text-sm text-muted">Events matching this status will appear here.</p></td></tr>}
             </tbody>
           </table>
         </div>
@@ -101,7 +97,7 @@ export default async function AdminEventsPage({ searchParams }: { searchParams?:
           <p className="mt-2 text-xs font-medium text-accent">{clubNames.get(event.club_id) ?? "Unknown club"}{event.category_id ? ` · ${categoryNames.get(event.category_id) ?? "Unknown category"}` : ""}</p>
           <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 border-t border-[#eeecf2] pt-3 text-[11px] text-muted"><span>Event: {dateLabel(event.event_date, { month: "short", day: "numeric", year: "numeric" })}</span><span>Added: {dateLabel(event.created_at, { month: "short", day: "numeric", year: "numeric" })}</span></div>
         </Link>)}
-        {!error && (events ?? []).length === 0 && <div className="rounded-[20px] border border-white/90 bg-white/70 px-5 py-10 text-center shadow-subtle"><p className="font-heading font-bold">{activeFilter === "pending" ? "No pending approvals" : "No events found"}</p><p className="mt-1 text-sm text-muted">{activeFilter === "pending" ? "You’re all caught up." : "Events matching this status will appear here."}</p></div>}
+        {!error && (events ?? []).length === 0 && <div className="rounded-[20px] border border-white/90 bg-white/70 px-5 py-10 text-center shadow-subtle"><p className="font-heading font-bold">No events found</p><p className="mt-1 text-sm text-muted">Events matching this status will appear here.</p></div>}
       </div>
     </div>
   );

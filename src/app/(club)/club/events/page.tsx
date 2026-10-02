@@ -5,7 +5,7 @@ export default async function ClubEventsPage() {
   const { supabase, clubId } = await requireClubAccount();
   const { data, error } = await supabase
     .from("events")
-    .select("id, title, description, poster_url, event_date, event_time, venue, category_id, registration_link, contact_details, status, rejection_reason, created_at")
+    .select("id, title, description, poster_url, event_date, event_time, venue, category_id, registration_link, contact_details, status, created_at")
     .eq("club_id", clubId)
     .order("event_date", { ascending: true });
 

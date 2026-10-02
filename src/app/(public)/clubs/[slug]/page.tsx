@@ -18,7 +18,7 @@ export default async function PublicClubPage({ params }: { params: { slug: strin
   if (!club) notFound();
 
   const [eventsResult, categoriesResult] = await Promise.all([
-    supabase.from("events").select("id, category_id, title, description, poster_url, event_date, event_time, venue, registration_link, contact_details").eq("club_id", club.id).eq("status", "approved").gte("event_date", todayAtCampus()).order("event_date", { ascending: true }),
+    supabase.from("events").select("id, category_id, title, description, poster_url, event_date, event_time, venue, registration_link, contact_details").eq("club_id", club.id).eq("status", "published").gte("event_date", todayAtCampus()).order("event_date", { ascending: true }),
     supabase.from("categories").select("id, name").order("name"),
   ]);
   const categoryNames = new Map((categoriesResult.data ?? []).map((category) => [category.id, category.name]));
@@ -62,7 +62,7 @@ export default async function PublicClubPage({ params }: { params: { slug: strin
               <div><p className="text-[10px] font-bold uppercase tracking-[.2em] text-accent">The club calendar</p><h2 id="upcoming-title" className="mt-2 font-heading text-3xl font-bold tracking-tight sm:text-4xl">Upcoming events</h2><p className="mt-2 text-sm text-muted">See what {club.name} is bringing to campus.</p></div>
               <span className="rounded-full border border-white/90 bg-white/65 px-4 py-2 text-sm text-muted shadow-[0_6px_24px_rgba(56,44,110,0.05)] backdrop-blur-xl"><span className="font-semibold text-foreground">{events.length}</span> {events.length === 1 ? "event" : "events"}</span>
             </div>
-            {events.length ? <div className="mt-7 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 xl:grid-cols-4">{events.map((event) => <PublicEventCard key={event.id} event={event} />)}</div> : !eventsResult.error && <div className="mt-7 rounded-[26px] border border-white/90 bg-white/60 px-6 py-12 text-center shadow-[0_14px_42px_rgba(28,24,52,0.05)] backdrop-blur-xl sm:py-16">
+            {events.length ? <div className="mt-7 grid grid-cols-2 gap-3 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 xl:grid-cols-4">{events.map((event) => <PublicEventCard key={event.id} event={event} />)}</div> : !eventsResult.error && <div className="mt-7 rounded-[26px] border border-white/90 bg-white/60 px-6 py-12 text-center shadow-[0_14px_42px_rgba(28,24,52,0.05)] backdrop-blur-xl sm:py-16">
               <span aria-hidden="true" className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-violet-50 text-xl text-accent">✳</span>
               <h3 className="mt-4 font-heading text-lg font-bold">Nothing on the calendar just yet</h3>
               <p className="mt-2 text-sm text-muted">Upcoming events from {club.name} will appear here.</p>

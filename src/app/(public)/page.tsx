@@ -48,7 +48,7 @@ export default async function PublicHomePage({ searchParams = {} }: { searchPara
     let query = supabase
       .from("events")
       .select("id, club_id, category_id, title, description, poster_url, event_date, event_time, venue, registration_link, contact_details, created_at")
-      .eq("status", "approved")
+      .eq("status", "published")
       .in("club_id", clubIds)
       .gte("event_date", from && from > today ? from : today);
     if (searchParams.club) query = query.eq("club_id", searchParams.club);
@@ -83,12 +83,12 @@ export default async function PublicHomePage({ searchParams = {} }: { searchPara
 
         {eventsError && <p role="alert" className="mt-5 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">Events could not be loaded: {eventsError}</p>}
 
-        {events.length > 0 ? <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 xl:grid-cols-4">
+        {events.length > 0 ? <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 xl:grid-cols-4">
           {events.map((event) => <PublicEventCard key={event.id} event={event} />)}
         </div> : !eventsError && <div className="mt-6 rounded-[20px] bg-white px-6 py-14 text-center shadow-subtle sm:py-20">
           <span aria-hidden="true" className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-violet-50 text-2xl text-accent">✳</span>
           <h3 className="mt-4 font-heading text-lg font-bold">{searchTerm || searchParams.club || searchParams.category || from || to ? "No events match your search" : "Nothing on the calendar yet"}</h3>
-          <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-muted">{searchTerm || searchParams.club || searchParams.category || from || to ? "Try adjusting your filters or search terms." : "New campus events will show up here as soon as they’re approved."}</p>
+          <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-muted">{searchTerm || searchParams.club || searchParams.category || from || to ? "Try adjusting your filters or search terms." : "New campus events will show up here as soon as clubs publish them."}</p>
           <Link href={searchTerm || searchParams.club || searchParams.category || from || to ? "/#events" : "/club/login"} className="mt-5 inline-flex rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-accent-dark">{searchTerm || searchParams.club || searchParams.category || from || to ? "Clear filters" : "You run a club? Submit an event"}</Link>
         </div>}
 
