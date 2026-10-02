@@ -7,9 +7,16 @@ async function getAdminClients() {
   const { data: { user }, error: authError } = await session.auth.getUser();
   if (authError || !user) return { response: NextResponse.json({ error: "Sign in as an administrator to manage events." }, { status: 401 }) };
 
-  const { data: isAdmin, error } = await session.rpc("is_event_wall_admin");
-  if (error) return { response: NextResponse.json({ error: "Could not verify administrator access. Refresh and try again." }, { status: 500 }) };
-  if (isAdmin !== true) return { response: NextResponse.json({ error: "This account is not authorized to manage events." }, { status: 403 }) };
+  // Match the admin layout and other admin APIs: check the signed-in user's
+  // actual admins row before using the service-role client. The RPC can return
+  // false on projects where its deployed definition is out of sync.
+  const { data: admin, error: adminError } = await session
+    .from("admins")
+    .select("id")
+    .eq("user_id", user.id)
+    .maybeSingle();
+  if (adminError) return { response: NextResponse.json({ error: "Could not verify administrator access. Refresh and try again." }, { status: 500 }) };
+  if (!admin) return { response: NextResponse.json({ error: "This account is not authorized to manage events." }, { status: 403 }) };
   return { service: createServiceClient() };
 }
 
